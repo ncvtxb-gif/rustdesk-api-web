@@ -15,3 +15,10 @@ export function normalizeProviderForm(form) {
   }
   return normalized
 }
+
+export function providerScopesPlaceholder(oauthType, optionalDefaultText) {
+  if (oauthType === 'feishu') {
+    return ''
+  }
+  return `${optionalDefaultText} 'openid,profile,email'`
+}

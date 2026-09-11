@@ -51,7 +51,7 @@
           <el-input v-model="formData.issuer" :placeholder="`${T('Check your IdP docs, without')} '/.well-known/openid-configuration'`"></el-input>
         </el-form-item>
         <el-form-item v-show="['oidc', 'feishu'].includes(formData.oauth_type)" label="Scopes" prop="scopes">
-          <el-input v-model="formData.scopes" :placeholder="`${T('Optional, default is')} 'openid,profile,email'`"></el-input>
+          <el-input v-model="formData.scopes" :placeholder="providerScopesPlaceholder(formData.oauth_type, T('Optional, default is'))"></el-input>
         </el-form-item>
         <el-form-item label="ClientId" prop="client_id">
           <el-input v-model="formData.client_id"></el-input>
@@ -108,7 +108,7 @@
   import { handleClipboard } from '@/utils/clipboard'
   import { useAppStore } from '@/store/app'
   import { CopyDocument } from '@element-plus/icons'
-  import { oauthProviderTypes, normalizeProviderForm } from './provider.mjs'
+  import { oauthProviderTypes, normalizeProviderForm, providerScopesPlaceholder } from './provider.mjs'
 
   const app = useAppStore()
 
