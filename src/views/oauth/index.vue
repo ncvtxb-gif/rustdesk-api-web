@@ -44,13 +44,13 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.oauth_type === 'oidc'" label="IdP" prop="op">
+        <el-form-item v-if="['oidc', 'feishu'].includes(formData.oauth_type)" label="IdP" prop="op">
           <el-input v-model="formData.op" :placeholder="T('Your IdP Name')"></el-input>
         </el-form-item>
         <el-form-item v-if="formData.oauth_type === 'oidc'" label="Issuer" prop="issuer">
           <el-input v-model="formData.issuer" :placeholder="`${T('Check your IdP docs, without')} '/.well-known/openid-configuration'`"></el-input>
         </el-form-item>
-        <el-form-item v-show="formData.oauth_type === 'oidc'" label="Scopes" prop="scopes">
+        <el-form-item v-show="['oidc', 'feishu'].includes(formData.oauth_type)" label="Scopes" prop="scopes">
           <el-input v-model="formData.scopes" :placeholder="`${T('Optional, default is')} 'openid,profile,email'`"></el-input>
         </el-form-item>
         <el-form-item label="ClientId" prop="client_id">
@@ -71,14 +71,14 @@
             </el-icon>
           </div>
         </el-form-item>
-        <el-form-item label="PkceEnable" prop="pkce_enable">
+        <el-form-item v-if="formData.oauth_type !== 'feishu'" label="PkceEnable" prop="pkce_enable">
           <el-switch v-model="formData.pkce_enable"
                      :active-value="true"
                      :inactive-value="false">
           </el-switch>
         </el-form-item>
 
-        <el-form-item v-if="formData.pkce_enable" label="PkceMethod" prop="pkce_method">
+        <el-form-item v-if="formData.oauth_type !== 'feishu' && formData.pkce_enable" label="PkceMethod" prop="pkce_method">
           <el-select v-model="formData.pkce_method" placeholder="Select PKCE Method">
             <el-option label="S256 (Recommended)" value="S256"></el-option>
             <el-option label="Plain" value="plain"></el-option>
@@ -108,6 +108,7 @@
   import { handleClipboard } from '@/utils/clipboard'
   import { useAppStore } from '@/store/app'
   import { CopyDocument } from '@element-plus/icons'
+  import { oauthProviderTypes, normalizeProviderForm } from './provider.mjs'
 
   const app = useAppStore()
 
@@ -122,12 +123,7 @@
     page: 1,
     page_size: 10,
   })
-  const types = [
-    { value: 'github', label: 'GitHub' },
-    { value: 'google', label: 'Google' },
-    { value: 'linuxdo', label: 'LinuxDo' },
-    { value: 'oidc', label: 'OIDC' },
-  ]
+  const types = oauthProviderTypes
   const getList = async () => {
     listRes.loading = true
     const res = await list(listQuery).catch(_ => false)
@@ -187,7 +183,16 @@
     client_secret: [{ required: true, message: T('ParamRequired', { param: 'client_secret' }), trigger: 'blur' }],
     // redirect_url: [{ required: true, message: T('ParamRequired', { param: 'redirect_url' }), trigger: 'blur' }],
     oauth_type: [{ required: true, message: T('ParamRequired', { param: 'oauth_type' }), trigger: 'blur' }],
-    issuer: [{ required: true, message: T('ParamRequired', { param: 'issuer' }), trigger: 'blur' }],
+    issuer: [{
+      validator: (rule, value, callback) => {
+        if (formData.oauth_type === 'oidc' && !value) {
+          callback(new Error(T('ParamRequired', { param: 'issuer' })))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    }],
     pkce_method: [
       { required: false, message: T('ParamRequired', { param: 'pkce_method' }), trigger: 'blur' },
       {
@@ -207,6 +212,10 @@
   const defaultRedirect = () => {
     return `${app.setting.rustdeskConfig.api_server || window.location.origin}/api/oidc/callback`
   }
+
+  watch(() => formData.oauth_type, () => {
+    Object.assign(formData, normalizeProviderForm(formData))
+  })
 
   const toEdit = (row) => {
     formVisible.value = true
@@ -238,6 +247,7 @@
   }
   const form = ref(null)
   const submit = async () => {
+    Object.assign(formData, normalizeProviderForm(formData))
     const v = await form.value.validate().catch(err => false)
     if (!v) {
       return
