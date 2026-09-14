@@ -16,6 +16,16 @@ body,
   overflow: hidden;
 }
 
+/* The redesigned shell takes its fixed sidebar out of normal flex flow. */
+#app > .el-container:has(> .app-sidebar) {
+  padding-left: var(--sideBarWidth);
+  box-sizing: border-box;
+}
+
+#app > .el-container:has(> .app-sidebar .sidebar-menu.el-menu--collapse) {
+  padding-left: 64px;
+}
+
 .app-sidebar,
 .app-left,
 .app-container {
@@ -27,8 +37,25 @@ body,
   overflow: hidden;
 }
 
+.app-body {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .app-main {
   flex: 1 1 auto;
   min-height: 0 !important;
   overflow: auto;
+}
+
+/*
+ * The redesigned user-information page used to stop at 800px, which made the
+ * page look clipped on wide displays. Let the page and its cards use all of
+ * the available main-content width, while retaining their internal padding.
+ */
+.app-main .my-info {
+  width: 100%;
+  max-width: none !important;
+  box-sizing: border-box;
 }
