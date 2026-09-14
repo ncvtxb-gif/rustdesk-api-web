@@ -31,3 +31,22 @@ test('leaves a layout unchanged when version or last online time is missing', ()
 
   assert.deepEqual(normalizePeerColumns(savedColumns), savedColumns)
 })
+
+test('removes enterprise-hidden columns from saved column layouts', () => {
+  const savedColumns = [
+    { name: 'id', visible: true },
+    { name: 'group_id', visible: true },
+    { name: 'uuid', visible: false },
+    { name: 'version', visible: true },
+    { name: 'last_online_time', visible: true },
+    { name: 'alias', visible: true },
+    { name: 'created_at', visible: true },
+  ]
+
+  assert.deepEqual(normalizePeerColumns(savedColumns).map(column => column.name), [
+    'id',
+    'version',
+    'last_online_time',
+    'created_at',
+  ])
+})

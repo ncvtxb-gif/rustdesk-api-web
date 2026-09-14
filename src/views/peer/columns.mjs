@@ -1,5 +1,6 @@
 export function normalizePeerColumns(columns) {
-  const normalized = [...columns]
+  const hiddenColumnNames = new Set(['group_id', 'uuid', 'alias'])
+  const normalized = columns.filter(column => !hiddenColumnNames.has(column.name))
   const lastOnlineIndex = normalized.findIndex(column => column.name === 'last_online_time')
   const versionIndex = normalized.findIndex(column => column.name === 'version')
 

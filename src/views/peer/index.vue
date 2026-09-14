@@ -87,15 +87,7 @@
           </el-table-column>
           <el-table-column v-if="c.name==='last_online_ip'" prop="last_online_ip" :label="T('LastOnlineIp')" align="center" min-width="120"/>
           <el-table-column v-if="c.name==='username'" prop="username" :label="T('Username')" align="center" width="120"/>
-          <el-table-column v-if="c.name==='group_id'" prop="group_id" :label="T('Group')" align="center" width="120">
-            <template #default="{row}">
-              <span v-if="row.group_id"> <el-tag>{{ groupListRes.list?.find(g => g.id === row.group_id)?.name }} </el-tag> </span>
-              <span v-else> - </span>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="c.name==='uuid'" prop="uuid" :label="T('Uuid')" align="center" width="120" show-overflow-tooltip/>
           <el-table-column v-if="c.name==='version'" prop="version" :label="T('Version')" align="center" width="80"/>
-          <el-table-column v-if="c.name==='alias'" prop="alias" :label="T('Alias')" align="center" width="80"/>
           <el-table-column v-if="c.name==='created_at'" prop="created_at" :label="T('CreatedAt')" align="center" width="150"/>
           <el-table-column v-if="c.name==='updated_at'" prop="updated_at" :label="T('UpdatedAt')" align="center" width="150"/>
         </template>
@@ -531,11 +523,8 @@
     { name: 'os', visible: true, label: 'Os' },
     { name: 'last_online_ip', visible: true, label: 'LastOnlineIp' },
     { name: 'username', visible: true, label: 'Username' },
-    { name: 'group_id', visible: true, label: 'Group' },
-    { name: 'uuid', visible: true, label: 'Uuid' },
     { name: 'version', visible: true, label: 'Version' },
     { name: 'last_online_time', visible: true, label: 'LastOnlineTime' },
-    { name: 'alias', visible: true, label: 'Alias' },
     { name: 'created_at', visible: true, label: 'CreatedAt' },
     { name: 'updated_at', visible: true, label: 'UpdatedAt' },
   ])
