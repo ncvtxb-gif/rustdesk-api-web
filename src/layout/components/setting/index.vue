@@ -35,7 +35,7 @@
     <el-dropdown class="menu-item">
       <div class="title">
         <!--        <el-image class="avatar" :src="user.avatar"></el-image>-->
-        <span class="nickname">{{ user.username }}</span>
+        <span class="nickname">{{ getUserDisplayName(user) }}</span>
         <el-icon>
           <el-icon-arrow-down/>
         </el-icon>
@@ -61,6 +61,7 @@
   import { T } from '@/utils/i18n'
   import { useDark } from '@vueuse/core'
   import { Sunny, Moon } from '@element-plus/icons'
+  import { getUserDisplayName } from '@/utils/user-display-name.mjs'
 
   const userStore = useUserStore()
   const user = userStore
