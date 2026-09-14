@@ -100,10 +100,9 @@
           <el-table-column v-if="c.name==='updated_at'" prop="updated_at" :label="T('UpdatedAt')" align="center" width="150"/>
         </template>
 
-        <el-table-column :label="T('Actions')" align="center" width="500" class-name="table-actions" fixed="right">
+        <el-table-column :label="T('Actions')" align="center" width="400" class-name="table-actions" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-            <el-button v-if="appStore.setting.appConfig.web_client" type="success" @click="toWebClientLink(row)">Web Client</el-button>
             <el-button type="primary" @click="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button>
             <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
             <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
@@ -234,12 +233,11 @@
   import { batchRemove, create, list, remove, update } from '@/api/peer'
   import { list as groupList } from '@/api/device_group'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { toWebClientLink } from '@/utils/webclient'
+  import { normalizePeerColumns } from './columns.mjs'
   import { T } from '@/utils/i18n'
   import { timeAgo } from '@/utils/time'
   import { jsonToCsv, downBlob } from '@/utils/file'
   import { loadAllUsers } from '@/global'
-  import { useAppStore } from '@/store/app'
   import { connectByClient } from '@/utils/peer'
   import { ArrowDown, ArrowUp, CopyDocument, Setting } from '@element-plus/icons'
   import { handleClipboard } from '@/utils/clipboard'
@@ -248,7 +246,6 @@
   import createABForm from '@/views/peer/createABForm.vue'
   import { UploadFilled } from '@element-plus/icons-vue'
 
-  const appStore = useAppStore()
 
   //group
   const groupListRes = reactive({
@@ -532,17 +529,17 @@
     { name: 'hostname', visible: true, label: 'Hostname' },
     { name: 'memory', visible: true, label: 'Memory' },
     { name: 'os', visible: true, label: 'Os' },
-    { name: 'last_online_time', visible: true, label: 'LastOnlineTime' },
     { name: 'last_online_ip', visible: true, label: 'LastOnlineIp' },
     { name: 'username', visible: true, label: 'Username' },
     { name: 'group_id', visible: true, label: 'Group' },
     { name: 'uuid', visible: true, label: 'Uuid' },
     { name: 'version', visible: true, label: 'Version' },
+    { name: 'last_online_time', visible: true, label: 'LastOnlineTime' },
     { name: 'alias', visible: true, label: 'Alias' },
     { name: 'created_at', visible: true, label: 'CreatedAt' },
     { name: 'updated_at', visible: true, label: 'UpdatedAt' },
   ])
-  const visibleColumns = ref(JSON.parse(localStorage.getItem('peer_visible_columns')) || allColumns.value)
+  const visibleColumns = ref(normalizePeerColumns(JSON.parse(localStorage.getItem('peer_visible_columns')) || allColumns.value))
   const showColumnSetting = () => {
     columnSettingVisible.value = true
   }
