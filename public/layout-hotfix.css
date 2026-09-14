@@ -1,0 +1,34 @@
+/*
+ * Keep the admin shell inside the browser viewport.
+ * The header and tags bar are siblings of .app-main, so .app-main must flex
+ * into the remaining height instead of calculating from the header alone.
+ */
+html,
+body,
+#app {
+  height: 100%;
+  overflow: hidden;
+}
+
+#app > .el-container {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-sidebar,
+.app-left,
+.app-container {
+  height: 100vh;
+  min-height: 0;
+}
+
+.app-container {
+  overflow: hidden;
+}
+
+.app-main {
+  flex: 1 1 auto;
+  min-height: 0 !important;
+  overflow: auto;
+}
