@@ -3,32 +3,6 @@
     <div class="login-card">
       <img src="@/assets/logo.png" alt="logo" class="login-logo"/>
 
-      <el-form v-if="!disablePwd" label-position="top" class="login-form">
-        <el-form-item :label="T('Username')">
-          <el-input v-model="form.username" type="username" class="login-input"></el-input>
-        </el-form-item>
-
-        <el-form-item :label="T('Password')">
-          <el-input v-model="form.password" type="password" @keyup.enter.native="login" show-password
-                    class="login-input"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Captcha')" v-if="captchaCode">
-          <el-input v-model="form.captcha" @keyup.enter.native="login"  class="login-input captcha-input">
-            <template #append>
-              <img :src="captchaCode.b64" @click="loadCaptcha" class="captcha" alt="captcha"/>
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="login" type="primary" class="login-button">{{ T('Login') }}</el-button>
-          <el-button v-if="allowRegister" @click="register" class="login-button">{{ T('Register') }}</el-button>
-        </el-form-item>
-      </el-form>
-
-      <div class="divider" v-if="options.length > 0 && !disablePwd">
-        <span>{{ T('or login in with') }}</span>
-      </div>
-
       <div class="oidc-options">
         <div v-for="(option, index) in options" :key="index" class="oidc-option">
           <el-button @click="handleOIDCLogin(option.name)" class="oidc-btn">
@@ -42,19 +16,19 @@
 </template>
 
 <script setup>
-  import { reactive, onMounted, ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useUserStore } from '@/store/user'
   import { ElMessage } from 'element-plus'
   import { T } from '@/utils/i18n'
   import { useRoute, useRouter } from 'vue-router'
-  import { loginOptions, captcha } from '@/api/login'
+  import { loginOptions } from '@/api/login'
   import { getCode, removeCode } from '@/utils/auth'
+  import { selectFeishuLoginOptions } from './enterprise-login.mjs'
 
-  const oauthInfo = ref({})
   const userStore = useUserStore()
   const route = useRoute()
   const router = useRouter()
-  const options = reactive([]) // 存储 OIDC 登录选项
+  const options = ref([])
 
   let platform = window.navigator.platform
   if (navigator.platform.indexOf('Mac') === 0) {
@@ -73,35 +47,7 @@
   else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) browser = 'Safari'
   else if (/edg/i.test(userAgent)) browser = 'Edge'
 
-  const form = reactive({
-    username: '',
-    password: '',
-    platform: platform,
-    captcha: '',
-    captcha_id: ''
-  })
-
-  const captchaCode = ref('')
   const redirect = route.query?.redirect
-  const login = async () => {
-    const res = await userStore.login(form).catch(e => e)
-    if (!res.code) {
-      ElMessage.success(T('LoginSuccess'))
-      router.push({ path: redirect || '/', replace: true })
-      return
-    }
-    if (res.code === 110) {
-      // need captcha
-      loadCaptcha()
-    }
-  }
-
-  const loadCaptcha = async () => {
-    const captchaRes = await captcha().catch(_ => false)
-    console.log(captchaRes)
-    captchaCode.value = captchaRes.data.captcha
-    form.captcha_id = captchaRes.data.captcha.id
-  }
 
   const handleOIDCLogin = (provider) => {
     userStore.oidc(provider, platform, browser)
@@ -110,14 +56,12 @@
   import googleImage from '@/assets/google.png'
   import githubImage from '@/assets/github.png'
   import oidcImage from '@/assets/oidc.png'
-  import webauthImage from '@/assets/webauth.png'
   import defaultImage from '@/assets/oidc.png'
 
   const providerImageMap = {
     google: googleImage,
     github: githubImage,
     oidc: oidcImage,
-    // WebAuth: webauthImage,
     default: defaultImage,
   }
 
@@ -125,22 +69,11 @@
     return providerImageMap[provider.toLowerCase()] || providerImageMap.default
   }
 
-  const allowRegister = ref(false)
-  const disablePwd = ref(false)
   const loadLoginOptions = async () => {
     try {
       const res = await loginOptions().catch(_ => false)
       if (!res || !res.data) return console.error('No valid response received')
-      res.data.ops.map(option => (options.push({ name: option }))) // 创建新的对象数组
-      if (res.data.auto_oidc) {
-        // 如果有自动OIDC登录选项，直接调用第一个
-        handleOIDCLogin(res.data.ops[0])
-      }
-      disablePwd.value = res.data.disable_pwd
-      allowRegister.value = res.data.register
-      if (res.data.need_captcha) {
-        loadCaptcha()
-      }
+      options.value = selectFeishuLoginOptions(res.data.ops).map(name => ({ name }))
     } catch (error) {
       console.error('Error loading login options:', error.message)
     }
@@ -158,14 +91,9 @@
         router.push({ path: redirect || '/', replace: true })
       }
     } else {
-      // 如果code不存在, 现实登陆页面
-      loadLoginOptions() // 组件挂载后调用登录选项加载函数
+      loadLoginOptions()
     }
   })
-
-  const register = () => {
-    router.push('/register')
-  }
 </script>
 
 <style scoped lang="scss">
@@ -186,62 +114,6 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-}
-
-h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.login-form {
-  margin-bottom: 20px;
-}
-
-.login-input {
-  width: 100%;
-  .captcha{
-    cursor: pointer;
-    width: 150px;
-  }
-}
-.captcha-input{
-  :deep(.el-input-group__append) {
-    border-radius: 5px;
-    padding: 0;
-    overflow: hidden;
-  }
-}
-
-.login-button {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-  margin-left: 0;
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  margin: 20px 0;
-  font-size: 14px;
-  color: #888;
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background-color: #ddd;
-  }
-
-  &::before {
-    margin-right: 10px;
-  }
-
-  &::after {
-    margin-left: 10px;
-  }
 }
 
 .oidc-options {
@@ -276,22 +148,5 @@ h1 {
   height: 80px;
   margin: 0 auto 20px;
   display: block;
-}
-
-.el-form-item {
-  ::v-deep(.el-form-item__label) {
-    color: #fff;
-  }
-
-  .el-input {
-    ::v-deep(.el-input__wrapper) {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: transparent;
-    }
-
-    ::v-deep(input) {
-      color: #fff;
-    }
-  }
 }
 </style>
