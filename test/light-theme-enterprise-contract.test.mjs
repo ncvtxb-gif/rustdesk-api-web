@@ -25,7 +25,7 @@ test('admin shell keeps the shared nickname display rule', async () => {
 })
 
 test('refreshed layout offsets the fixed sidebar and keeps the light visual shell', async () => {
-  const [layoutSource, asideSource, headerSource, menuSource, responsiveSource, loginSource, peerSource] = await Promise.all([
+  const [layoutSource, asideSource, headerSource, menuSource, responsiveSource, loginSource, peerSource, hotfixSource] = await Promise.all([
     readSource('src/layout/index.vue'),
     readSource('src/layout/components/aside.vue'),
     readSource('src/layout/components/header.vue'),
@@ -33,9 +33,12 @@ test('refreshed layout offsets the fixed sidebar and keeps the light visual shel
     readSource('src/composables/useNarrowLayout.js'),
     readSource('src/views/login/login.vue'),
     readSource('src/views/peer/index.vue'),
+    readSource('public/layout-hotfix.css'),
   ])
 
   assert.equal(layoutSource.includes(':style="{ marginLeft: leftWidth }"'), true)
+  assert.equal(hotfixSource.includes('padding-left: var(--sideBarWidth)'), false)
+  assert.equal(hotfixSource.includes('padding-left: 64px'), false)
   assert.equal(layoutSource.includes('@media (max-width: 900px)'), true)
   assert.equal(layoutSource.includes('isNarrow.value || appStore.setting.sideIsCollapse'), true)
   assert.equal(asideSource.includes(':src="setting.logo"'), true)

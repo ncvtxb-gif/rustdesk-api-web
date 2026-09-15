@@ -16,16 +16,6 @@ body,
   overflow: hidden;
 }
 
-/* The redesigned shell takes its fixed sidebar out of normal flex flow. */
-#app > .el-container:has(> .app-sidebar) {
-  padding-left: var(--sideBarWidth);
-  box-sizing: border-box;
-}
-
-#app > .el-container:has(> .app-sidebar .sidebar-menu.el-menu--collapse) {
-  padding-left: 64px;
-}
-
 .app-sidebar,
 .app-left,
 .app-container {
