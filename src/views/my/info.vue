@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-card :title="T('Userinfo')" shadow="hover">
+  <div class="my-info">
+    <div class="info-card">
+      <div class="section-title profile-section-title">{{ T('Userinfo') }}</div>
       <el-form class="info-form" ref="form" label-width="120px" label-suffix="：">
         <el-form-item :label="T('Username')">
           <div>{{ userStore.username }}</div>
@@ -29,10 +30,11 @@
           </el-table>
         </el-form-item>
       </el-form>
-    </el-card>
-    <el-card shadow="hover" style="margin-top: 20px">
+    </div>
+    <div class="info-card">
+      <div class="section-title">{{ T('Announcement') }}</div>
       <div v-html="html"></div>
-    </el-card>
+    </div>
     <changePwdDialog v-model:visible="changePwdVisible"></changePwdDialog>
   </div>
 </template>
@@ -91,9 +93,34 @@
 </script>
 
 <style scoped lang="scss">
-.info-form {
-  width: 600px;
+.my-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 800px;
   margin: 0 auto;
+}
 
+.info-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d2129;
+  margin-bottom: 16px;
+
+  &.profile-section-title {
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 12px;
+  }
+}
+
+.info-form {
+  width: 100%;
 }
 </style>

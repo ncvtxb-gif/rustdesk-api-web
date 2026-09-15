@@ -1,51 +1,370 @@
-$basicBlack: #000000;
-$basicWhite: #ffffff;
+// ============================================
+// RustDesk API Admin — Modern Design System
+// ============================================
 
-$primaryColor: #409eff;
+// --- Color Palette: Indigo-Teal theme ---
+$bg-sidebar: #1e1e2f;
+$bg-header: #1e1e2f;
+$bg-page: #f0f2f5;
+$bg-card: #ffffff;
+$bg-input: #f7f8fa;
 
+$text-primary: #1d2129;
+$text-secondary: #4e5969;
+$text-muted: #86909c;
+$text-inverse: #ffffff;
+
+$brand-primary: #4f6ef7;
+$brand-primary-hover: #3b5de7;
+$brand-primary-light: #e8eeff;
+$brand-success: #22c55e;
+$brand-warning: #f59e0b;
+$brand-danger: #ef4444;
+$brand-info: #64748b;
+
+$border-light: #e5e6eb;
+$border-base: #d0d3d7;
+
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+
+$transition-fast: 0.15s ease;
+$transition-base: 0.25s ease;
+
+// ============================================
+// Element Plus CSS Variable Override (Light)
+// ============================================
 :root {
-  --basicBlack: #000000;
-  --basicWhite: #ffffff;
-  --primaryColor: #409eff;
-  --tag-bg-color: #efefef;
+  --el-color-primary: #{$brand-primary};
+  --el-color-primary-light-1: #{mix($brand-primary, white, 90%)};
+  --el-color-primary-light-2: #{mix($brand-primary, white, 80%)};
+  --el-color-primary-light-3: #{mix($brand-primary, white, 70%)};
+  --el-color-primary-light-4: #{mix($brand-primary, white, 60%)};
+  --el-color-primary-light-5: #{mix($brand-primary, white, 50%)};
+  --el-color-primary-light-6: #{mix($brand-primary, white, 40%)};
+  --el-color-primary-light-7: #{mix($brand-primary, white, 30%)};
+  --el-color-primary-light-8: #{mix($brand-primary, white, 20%)};
+  --el-color-primary-light-9: #{mix($brand-primary, white, 10%)};
+  --el-color-primary-dark-2: #{darken($brand-primary, 10%)};
+
+  --el-color-success: #{$brand-success};
+  --el-color-success-light-3: #{mix($brand-success, white, 70%)};
+  --el-color-success-light-5: #{mix($brand-success, white, 50%)};
+  --el-color-success-light-7: #{mix($brand-success, white, 30%)};
+  --el-color-success-light-9: #{mix($brand-success, white, 10%)};
+
+  --el-color-warning: #{$brand-warning};
+  --el-color-warning-light-3: #{mix($brand-warning, white, 70%)};
+  --el-color-warning-light-5: #{mix($brand-warning, white, 50%)};
+  --el-color-warning-light-7: #{mix($brand-warning, white, 30%)};
+  --el-color-warning-light-9: #{mix($brand-warning, white, 10%)};
+
+  --el-color-danger: #{$brand-danger};
+  --el-color-danger-light-3: #{mix($brand-danger, white, 70%)};
+  --el-color-danger-light-5: #{mix($brand-danger, white, 50%)};
+  --el-color-danger-light-7: #{mix($brand-danger, white, 30%)};
+  --el-color-danger-light-9: #{mix($brand-danger, white, 10%)};
+
+  --el-color-info: #{$brand-info};
+  --el-color-info-light-3: #{mix($brand-info, white, 70%)};
+  --el-color-info-light-5: #{mix($brand-info, white, 50%)};
+  --el-color-info-light-7: #{mix($brand-info, white, 30%)};
+  --el-color-info-light-9: #{mix($brand-info, white, 10%)};
+
+  --el-text-color-primary: #{$text-primary};
+  --el-text-color-regular: #{$text-secondary};
+  --el-text-color-secondary: #{$text-muted};
+  --el-text-color-placeholder: #c0c4cc;
+
+  --el-bg-color: #{$bg-card};
+  --el-bg-color-page: #{$bg-page};
+  --el-bg-color-overlay: #{$bg-card};
+  --el-fill-color-blank: #{$bg-card};
+  --el-fill-color-light: #{$bg-input};
+
+  --el-border-color: #{$border-light};
+  --el-border-color-light: #{$border-light};
+  --el-border-color-lighter: #f0f0f0;
+  --el-border-color-dark: #{$border-base};
+  --el-border-radius-base: #{$radius-md};
+  --el-border-radius-small: #{$radius-sm};
+  --el-border-radius-round: 20px;
+
+  --el-component-size-large: 40px;
+  --el-component-size: 32px;
+  --el-component-size-small: 28px;
+
+  --el-box-shadow-light: #{$shadow-sm};
+  --el-box-shadow: #{$shadow-md};
+  --el-box-shadow-dark: #{$shadow-lg};
+
+  --el-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --el-font-size-base: 14px;
+  --el-font-size-small: 13px;
+
+  --basicBlack: #{$text-primary};
+  --basicWhite: #{$text-inverse};
+  --primaryColor: #{$brand-primary};
+  --tag-bg-color: #f0f2f5;
+}
+
+// ============================================
+// Global Reset & Base
+// ============================================
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-family: var(--el-font-family);
+  color: var(--el-text-color-primary);
+  background: var(--el-bg-color-page);
+  margin: 0;
+  line-height: 1.6;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 3px;
+
+  &:hover {
+    background: #a0a4ac;
+  }
+}
+
+// ============================================
+// El-Table — Modern look
+// ============================================
+.el-table {
+  --el-table-border-color: #{$border-light};
+  --el-table-header-bg-color: #f8f9fb;
+  --el-table-row-hover-bg-color: #f5f7ff;
+  --el-table-current-row-bg-color: #f5f7ff;
+  --el-table-header-text-color: #{$text-secondary};
+  --el-table-text-color: #{$text-primary};
+  border-radius: #{$radius-lg};
+  overflow: hidden;
+
+  th.el-table__cell {
+    font-weight: 600;
+    font-size: 13px;
+    height: 44px;
+    border-bottom: 1px solid var(--el-border-color);
+  }
+
+  td.el-table__cell {
+    font-size: 13px;
+    height: 46px;
+  }
+
+  .el-table__inner-wrapper::before {
+    display: none;
+  }
+}
+
+// ============================================
+// El-Button — Refined
+// ============================================
+.el-button {
+  --el-button-border-color: #{$border-base};
+  font-weight: 500;
+  border-radius: #{$radius-md};
+  letter-spacing: 0.01em;
+  transition: all #{$transition-fast};
+
+  &.el-button--primary {
+    --el-button-bg-color: #{$brand-primary};
+    --el-button-border-color: #{$brand-primary};
+    --el-button-hover-bg-color: #{$brand-primary-hover};
+    --el-button-hover-border-color: #{$brand-primary-hover};
+    box-shadow: 0 1px 3px rgba($brand-primary, 0.3);
+  }
+
+  &.el-button--small {
+    border-radius: #{$radius-sm};
+    font-size: 13px;
+  }
+}
+
+// ============================================
+// El-Card — Clean cards
+// ============================================
+.el-card {
+  --el-card-border-color: #{$border-light};
+  --el-card-border-radius: #{$radius-lg};
+  border: none;
+  box-shadow: #{$shadow-sm};
+  transition: box-shadow #{$transition-base};
+
+  &.is-hover-shadow:hover {
+    box-shadow: #{$shadow-md};
+  }
+}
+
+// ============================================
+// El-Input / El-Select — Modern form
+// ============================================
+.el-input {
+  --el-input-border-radius: #{$radius-md};
+  --el-input-bg-color: #{$bg-input};
+
+  .el-input__wrapper {
+    transition: all #{$transition-fast};
+    box-shadow: 0 0 0 1px var(--el-border-color) inset;
+
+    &:hover {
+      box-shadow: 0 0 0 1px var(--el-border-color-dark) inset;
+    }
+
+    &.is-focus {
+      box-shadow: 0 0 0 1px var(--el-color-primary) inset, 0 0 0 2px rgba($brand-primary, 0.12);
+    }
+  }
+}
+
+.el-select {
+  --el-select-border-color-hover: #{$border-base};
+  --el-select-input-focus-border-color: #{$brand-primary};
+}
+
+// ============================================
+// El-Tag — Modern badges
+// ============================================
+.el-tag {
+  border-radius: #{$radius-sm};
+  border: none;
+  font-weight: 500;
+
+  &.el-tag--primary {
+    background: #{$brand-primary-light};
+    color: #{$brand-primary};
+  }
+}
+
+// ============================================
+// El-Dialog — Modern modal
+// ============================================
+.el-dialog {
+  border-radius: #{$radius-xl};
+  box-shadow: #{$shadow-lg};
+
+  .el-dialog__header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #{$border-light};
+    margin-right: 0;
+
+    .el-dialog__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #{$text-primary};
+    }
+  }
+
+  .el-dialog__body {
+    padding: 24px;
+  }
+
+  .el-dialog__footer {
+    padding: 16px 24px;
+    border-top: 1px solid #{$border-light};
+  }
+}
+
+// ============================================
+// El-Pagination — Clean pagination
+// ============================================
+.el-pagination {
+  --el-pagination-button-bg-color: #{$bg-card};
+  .btn-prev, .btn-next, .el-pager li {
+    border-radius: #{$radius-sm};
+  }
+}
+
+// ============================================
+// El-Switch — Subtle
+// ============================================
+.el-switch {
+  --el-switch-on-color: #{$brand-primary};
+  --el-switch-off-color: #{$border-base};
+}
+
+// ============================================
+// El-Form — Clean labels
+// ============================================
+.el-form-item__label {
+  font-weight: 500;
+  color: #{$text-secondary};
+}
+
+// ============================================
+// El-Menu (sidebar overrides)
+// ============================================
+.el-menu {
+  border-right: none !important;
+}
+
+// ============================================
+// NProgress Override
+// ============================================
+#nprogress .bar {
+  background: #{$brand-primary} !important;
+  height: 2px !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 8px #{$brand-primary}, 0 0 4px #{$brand-primary} !important;
+}
+
+// ============================================
+// Page-level Utility Classes
+// ============================================
 .list-body {
-  margin: 10px 0;
-}
-
-.dialog-form {
-  max-width: 600px;
-  margin: 20px auto;
+  margin: 12px 0;
 }
 
 .list-query {
+  .el-form--inline .el-form-item {
+    margin-right: 16px;
+  }
+
   .el-select {
-    --el-select-width: 160px;
+    --el-select-width: 180px;
   }
 
   .el-input {
-    --el-input-width: 160px;
+    --el-input-width: 180px;
   }
+}
+
+.list-page {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialog-form {
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .table-actions {
   .el-button {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin: 2px 4px;
   }
-}
-
-html.dark {
-  /* 自定义深色背景颜色 */
-  //--el-bg-color: #626aef;
-  --tag-bg-color: #24252b;
-  --basicBlack: #fff;
 }

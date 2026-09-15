@@ -1,22 +1,5 @@
 <template>
   <div class="setting">
-    <div class="menu-item">
-      <el-switch
-          v-model="isDark"
-          style="--el-switch-on-color:#18222c"
-      >
-        <template #active-action>
-          <el-icon>
-            <Moon/>
-          </el-icon>
-        </template>
-        <template #inactive-action>
-          <el-icon>
-            <Sunny color="#000"/>
-          </el-icon>
-        </template>
-      </el-switch>
-    </div>
     <el-dropdown class="menu-item">
       <div class="title">
         <i class="el-icon el-tooltip__trigger" style="font-size: 24px;">
@@ -59,8 +42,6 @@
   import changePwdDialog from '@/components/changePwdDialog.vue'
   import { ref } from 'vue'
   import { T } from '@/utils/i18n'
-  import { useDark } from '@vueuse/core'
-  import { Sunny, Moon } from '@element-plus/icons'
   import { getUserDisplayName } from '@/utils/user-display-name.mjs'
 
   const userStore = useUserStore()
@@ -79,8 +60,6 @@
   const changeLang = (v) => {
     appStore.changeLang(v)
   }
-  const isDark = useDark()
-  // const toggleDark = useToggle(isDark)
 </script>
 
 <style lang="scss" scoped>
@@ -88,10 +67,11 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-end;
+  gap: 4px;
 
   .menu-item {
-    margin-left: 15px;
+    margin-left: 8px;
 
     * {
       outline: none;
@@ -99,14 +79,28 @@
   }
 
   .title {
-    color: #fff;
+    color: #4e5969;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+
+    &:hover {
+      color: #4f6ef7;
+      background: #f2f3f5;
+    }
 
 
     .nickname {
       padding: 0 10px;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }

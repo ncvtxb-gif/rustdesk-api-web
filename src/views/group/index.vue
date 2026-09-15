@@ -1,37 +1,37 @@
 <template>
-  <div>
-    <el-card class="list-query" shadow="hover">
-      <el-form inline label-width="80px">
-        <!--        <el-form-item label="名称">
-                  <el-input v-model="listQuery.name"></el-input>
-                </el-form-item>-->
-        <el-form-item>
-          <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
-          <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-    <el-card class="list-body" shadow="hover">
-      <el-table :data="listRes.list" v-loading="listRes.loading" border>
+  <div class="list-page-wrap">
+    <div class="page-toolbar">
+      <div class="page-toolbar-search">
+        <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
+      </div>
+      <div class="page-toolbar-actions">
+        <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
+      </div>
+    </div>
+    <div class="page-table">
+      <el-table :data="listRes.list" v-loading="listRes.loading" stripe>
         <el-table-column prop="id" label="ID" align="center"></el-table-column>
         <el-table-column prop="name" :label="T('Name')" align="center"/>
         <el-table-column prop="type" :label="T('Type')" align="center">
           <template #default="{row}">
-            <span v-if="row.type === 1">{{ T('CommonGroup') }}</span>
-            <span v-else>{{ T('SharedGroup') }}</span>
+            <el-tag v-if="row.type === 1" size="small">{{ T('CommonGroup') }}</el-tag>
+            <el-tag v-else size="small" type="warning">{{ T('SharedGroup') }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="created_at" :label="T('CreatedAt')" align="center"/>
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center"/>
-        <el-table-column :label="T('Actions')" align="center">
+        <el-table-column :label="T('Actions')" align="center" width="200">
           <template #default="{row}">
-            <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
-            <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+            <el-button size="small" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button size="small" type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :description="T('NoData')" />
+        </template>
       </el-table>
-    </el-card>
-    <el-card class="list-page" shadow="hover">
+    </div>
+    <div class="page-footer">
       <el-pagination background
                      layout="prev, pager, next, sizes, jumper"
                      :page-sizes="[10,20,50,100]"
@@ -39,7 +39,7 @@
                      v-model:current-page="listQuery.page"
                      :total="listRes.total">
       </el-pagination>
-    </el-card>
+    </div>
     <el-dialog v-model="formVisible" :title="!formData.id?T('Create'):T('Update')" width="800">
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
         <el-form-item :label="T('Name')" prop="name" required>
@@ -152,5 +152,48 @@
 </script>
 
 <style scoped lang="scss">
+.list-page-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.page-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.page-table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.page-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .page-toolbar {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .page-toolbar-search,
+  .page-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .page-table {
+    overflow-x: auto;
+  }
+}
 
 </style>

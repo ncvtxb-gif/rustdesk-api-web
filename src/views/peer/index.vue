@@ -1,15 +1,12 @@
 <template>
-  <div>
-    <el-card class="list-query" shadow="hover">
-      <el-form inline label-width="60px">
-        <el-form-item label="ID">
-          <el-input v-model="listQuery.id" clearable/>
-        </el-form-item>
-        <el-form-item :label="T('Hostname')">
-          <el-input v-model="listQuery.hostname" clearable/>
-        </el-form-item>
-        <el-form-item :label="T('LastOnlineTime')" label-width="100px">
-          <el-select v-model="listQuery.time_ago" clearable>
+  <div class="peer-page">
+    <div class="page-toolbar">
+      <div class="page-toolbar-search">
+          <el-input v-model="listQuery.id" clearable placeholder="ID" class="toolbar-input"/>
+          <el-input v-model="listQuery.hostname" clearable :placeholder="T('Hostname')" class="toolbar-input"/>
+          <el-input v-model="listQuery.username" clearable :placeholder="T('Username')" class="toolbar-input"/>
+          <el-input v-model="listQuery.ip" clearable placeholder="IP" class="toolbar-input"/>
+          <el-select v-model="listQuery.time_ago" clearable :placeholder="T('LastOnlineTime')" class="toolbar-input">
             <el-option
                 v-for="item in timeFilters"
                 :key="item.value"
@@ -18,15 +15,9 @@
                 :disabled="item.value === 0"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item :label="T('Username')">
-          <el-input v-model="listQuery.username" clearable/>
-        </el-form-item>
-        <el-form-item label="IP">
-          <el-input v-model="listQuery.ip" clearable/>
-        </el-form-item>
-        <el-form-item>
           <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
+      </div>
+      <div class="page-toolbar-actions">
           <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
           <el-button type="success" @click="toExport">{{ T('Export') }}</el-button>
           <el-popover :visible="showImport" placement="bottom" :width="600">
@@ -58,20 +49,20 @@
           </el-popover>
           <el-button type="danger" @click="toBatchDelete">{{ T('BatchDelete') }}</el-button>
           <el-button type="primary" @click="toBatchAddToAB">{{ T('BatchAddToAB') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-    <el-card class="list-body" shadow="hover">
-      <div style="text-align: right; margin-bottom: 10px">
+      </div>
+    </div>
+    <div class="page-table">
+      <div class="table-header">
+        <span class="table-count">{{ T('Total') }}: {{ listRes.total }}</span>
         <el-button :icon="Setting" @click="showColumnSetting"></el-button>
       </div>
 
-      <el-table :data="listRes.list" v-loading="listRes.loading" border size="small" @selection-change="handleSelectionChange">
+      <el-table :data="listRes.list" v-loading="listRes.loading" stripe size="small" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
         <template v-for="c in visibleColumns.filter(cc => cc.visible)" :key="c">
           <el-table-column v-if="c.name==='id'" prop="id" label="ID" align="center" width="150">
             <template #default="{row}">
-              <span>{{ row.id }} <el-icon @click="handleClipboard(row.id, $event)"><CopyDocument/></el-icon></span>
+              <span>{{ row.id }} <el-icon class="peer-copy" @click="handleClipboard(row.id, $event)"><CopyDocument/></el-icon></span>
             </template>
           </el-table-column>
           <el-table-column v-if="c.name==='cpu'" prop="cpu" label="CPU" align="center" width="100" show-overflow-tooltip/>
@@ -81,7 +72,8 @@
           <el-table-column v-if="c.name==='last_online_time'" prop="last_online_time" :label="T('LastOnlineTime')" align="center" min-width="120">
             <template #default="{row}">
               <div class="last_oline_time">
-                <span> {{ row.last_online_time ? timeAgo(row.last_online_time * 1000) : '-' }}</span> <span class="dot" :class="{red: timeDis(row.last_online_time) >= 60, green: timeDis(row.last_online_time)< 60}"></span>
+                <span> {{ row.last_online_time ? timeAgo(row.last_online_time * 1000) : '-' }}</span>
+                <span class="online-dot" :class="timeDis(row.last_online_time) < 60 ? 'online-dot--online' : 'online-dot--offline'"></span>
               </div>
             </template>
           </el-table-column>
@@ -94,15 +86,18 @@
 
         <el-table-column :label="T('Actions')" align="center" width="400" class-name="table-actions" fixed="right">
           <template #default="{row}">
-            <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-            <el-button type="primary" @click="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button>
-            <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
-            <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+            <el-button size="small" type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
+            <el-button size="small" type="primary" @click="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button>
+            <el-button size="small" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button size="small" type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :description="T('NoData')" />
+        </template>
       </el-table>
-    </el-card>
-    <el-card class="list-page" shadow="hover">
+    </div>
+    <div class="page-footer">
       <el-pagination background
                      layout="prev, pager, next, sizes, jumper"
                      :page-sizes="[10,20,50,100]"
@@ -110,7 +105,7 @@
                      v-model:current-page="listQuery.page"
                      :total="listRes.total">
       </el-pagination>
-    </el-card>
+    </div>
     <el-dialog v-model="formVisible" :title="!formData.row_id?T('Create'):T('Update')" width="800">
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
         <el-form-item label="ID" prop="id" required>
@@ -555,8 +550,62 @@
 </script>
 
 <style scoped lang="scss">
-.list-query .el-select {
-  --el-select-width: 180px;
+.peer-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.page-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+
+  .page-toolbar-search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+
+    .toolbar-input {
+      width: 160px;
+    }
+  }
+
+  .page-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+.page-table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+
+    .table-count {
+      font-size: 14px;
+      font-weight: 500;
+      color: #4e5969;
+    }
+  }
+}
+
+.page-footer {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .last_oline_time {
@@ -565,19 +614,44 @@
   align-items: center;
 }
 
-.dot {
-  width: 6px;
-  height: 6px;
+.online-dot {
+  width: 8px;
+  height: 8px;
   display: block;
   border-radius: 50%;
   margin-left: 10px;
 
-  &.red {
-    background-color: red;
+  &.online-dot--online {
+    background-color: #22c55e;
+    box-shadow: 0 0 6px #22c55e;
   }
 
-  &.green {
-    background-color: green;
+  &.online-dot--offline {
+    background-color: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+  }
+}
+
+.peer-copy {
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #4f6ef7;
+  }
+}
+
+@media (max-width: 900px) {
+  .page-toolbar {
+    align-items: flex-start;
+  }
+
+  .page-toolbar-search .toolbar-input {
+    width: min(160px, 100%);
+  }
+
+  .page-table {
+    overflow-x: auto;
   }
 }
 </style>

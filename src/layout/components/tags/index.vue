@@ -1,14 +1,18 @@
 <template>
-  <el-tag v-for="(t, i) in tags"
-          :key="t.name"
-          class="tag"
-          :closable="t.closeable"
-          @close="close(t)"
-          @click="toTag(t)"
-          :type="t.active?'primary':'info'"
-          :effect="t.active?'dark':'plain'">
-    {{ T(t.title) }}
-  </el-tag>
+  <div class="tags-nav">
+    <div
+      v-for="(t, i) in tags"
+      :key="t.name"
+      class="nav-tag"
+      :class="{ 'nav-tag--active': t.active }"
+      @click="toTag(t)"
+    >
+      <span class="nav-tag-text">{{ T(t.title) }}</span>
+      <el-icon v-if="t.closeable" :size="12" class="nav-tag-close" @click.stop="close(t)">
+        <Close />
+      </el-icon>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -16,9 +20,11 @@
   import { useTagsStore } from '@/store/tags'
   import { useRoute, useRouter } from 'vue-router'
   import { T } from '@/utils/i18n'
+  import { Close } from '@element-plus/icons'
 
   export default defineComponent({
     name: 'Index',
+    components: { Close },
     setup () {
       const tags = ref([])
       const tagsStore = useTagsStore()
@@ -72,12 +78,44 @@
 </script>
 
 <style lang="scss" scoped>
+.tags-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 100%;
+}
 
-.tag {
-  border-radius: 0;
+.nav-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #86909c;
   cursor: pointer;
+  user-select: none;
+  transition: background 0.2s, color 0.2s;
 
-  &.active {
+  &:hover {
+    background: #f2f3f5;
+  }
+
+  &.nav-tag--active {
+    background: #e8eeff;
+    color: #4f6ef7;
+    font-weight: 500;
+  }
+
+  .nav-tag-close {
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
   }
 }
 </style>
